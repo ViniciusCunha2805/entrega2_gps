@@ -3,25 +3,16 @@
 Este documento apresenta os indicadores de desempenho, progresso e gargalos observados pelo time durante a execução da primeira Sprint do projeto da Barbearia.
 
 ### 📊 1. Resumo de Atividades (Burndown Simplificado)
-* [cite_start]**Total de User Stories Planejadas:** 5 histórias[cite: 158].
-* **Total de User Stories Concluídas:** 3 histórias (Previsão até o fim da sprint).
-* **Total de User Stories Pendentes/Em Revisão:** 2 histórias.
-* **Quantidade de Tarefas Técnicas Totais (Subtarefas):** 12 tarefas.
-  * Concluídas: 8 tarefas.
-  * Em andamento / Teste: 4 tarefas.
+* **Total de User Stories/Marcos Planejados para a Sprint 01:** 3 marcos de gestão e refinamento do escopo mapeados.
+* **Total de Tarefas Concluídas:** 0 tarefas (Módulos operacionais de código em fase inicial de planejamento).
+* **Total de Tarefas Em Andamento:** 1 tarefa (`[Gestão] Definição do Escopo do MVP & Alinhamento Inicial`).
+* **Total de Tarefas Pendentes (A Fazer):** 2 tarefas (`[Gestão] Estruturação do Product Backlog Alto Nível` e `[Gestão] Refinamento do Backlog & Definição de Critérios de Aceitação`).
 
 ### ⏱️ 2. Tempo Médio de Conclusão (Lead Time Estimado)
-* **Configuração de Ambiente e Banco de Dados (Vinícius):** 3 dias.
-* **Desenvolvimento de Endpoints de Autenticação e RBAC (Vinícius):** 2 dias.
-* **Criação da Interface de Agendamento (Lucas):** 4 dias.
-* **Tempo Médio Geral por História de Usuário:** Aproximadamente 3 a 4 dias do início do desenvolvimento até o envio para a branch de teste.
+* **Tempo Médio Geral por História de Gestão:** Aproximadamente 2 a 3 dias para refinamento e escrita completa das especificações no repositório.
 
 ### 🚗 3. Principais Gargalos Encontrados
-> **Nota de Edição (Douglas):** Modifique este ponto caso o grupo tenha enfrentado outros problemas técnicos reais.
-* [cite_start]**Gargalo Técnico na Engine de Estoque:** A implementação da atomicidade da transação no backend (garantir o Rollback e travar o agendamento se o produto estivesse zerado no estoque) exigiu mais tempo de pesquisa no Prisma ORM do que o planejado originalmente, gerando um atraso de 2 dias no início da integração com o frontend[cite: 178, 206, 232].
-* [cite_start]**Ajuste de Comunicação Assíncrona:** A sincronização dos estados de erro do backend (como tratar o erro HTTP 400/422 de horário ocupado ou produto indisponível) no React Query gerou refatoração nas telas criadas pelo Lucas[cite: 162, 220, 242].
+* **Alinhamento de Regras de Negócio Iniciais:** O mapeamento de como funcionaria a engine de ociosidade (descontos de seg-qui antes das 12:00) em conjunto com a atomicidade de estoque exigiu reuniões extras de refinamento antes de começar a criar os cards finais, o que concentrou os esforços do início da sprint na parte estratégica de gestão.
 
 ### ⚡ 4. Velocidade da Sprint (Simplificada)
-A velocidade do grupo para esta Sprint 01 foi calculada com base na entrega das fundações do software.
-* [cite_start]**Entregas de Valor Realizadas:** Setup completo da infraestrutura modular [cite: 161][cite_start], banco de dados PostgreSQL rodando com Prisma [cite: 163, 178][cite_start], fluxo de autenticação JWT seguro [cite: 164, 179] [cite_start]e telas base do fluxo passo a passo do cliente[cite: 208].
-* [cite_start]**Capacidade de Entrega Estabilizada:** O time demonstrou capacidade de absorver e finalizar a arquitetura base do backend e as telas principais do frontend dentro do ciclo de 14 dias [cite: 158][cite_start], deixando refinamentos de segurança e testes automatizados de ociosidade para a abertura do próximo ciclo[cite: 173, 241, 243].
+* **Capacidade de Entrega Estabilizada:** O time focou em consolidar toda a documentação ágil de base e a arquitetura visual do Trello neste início de ciclo, preparando o terreno limpo e sem impedimentos para que o desenvolvimento de código aconteça de forma fluida nas próximas etapas.
