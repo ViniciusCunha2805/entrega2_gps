@@ -16,12 +16,12 @@ Selecionamos essas histórias porque elas compõem o núcleo de valor e os princ
 ### 4. Divisão de Responsabilidades (Frentes de Trabalho)
 Para garantir eficiência nos 14 dias de desenvolvimento, dividimos o time em papéis estratégicos:
 
-* **Vinícius Cunha (Desenvolvimento Core & Deploy):**
+* **Douglas Bolis (Desenvolvimento Core & Deploy):**
     * Configuração do ambiente do projeto (NestJS, Docker para PostgreSQL e Prisma ORM).
     * Criação das entidades de banco de dados (User, Service, Product, Stock, Appointment).
     * Desenvolvimento do Backend (Engine de disponibilidade, Auth JWT/RBAC e interceptor de precificação dinâmica).
     * Deploy online da aplicação.
-* **Douglas Bolis (Gestão Ágil, Planejamento & Métricas):**
+* **Vinícius Cunha (Gestão Ágil, Planejamento & Métricas):**
     * Criação e manutenção do quadro Kanban no GitHub Projects.
     * Documentação dos artefatos de processo (`visao-produto.md`, `backlog.md`, `sprint.md`, `reunioes.md`, `metricas.md`).
     * Coleta de dados e gargalos ao fim da sprint.
