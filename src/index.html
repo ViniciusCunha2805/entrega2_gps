@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>BarberPro</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0a0a0b;
+  --bg2:#111113;
+  --bg3:#1a1a1e;
+  --bg4:#222228;
+  --gold:#c9a84c;
+  --gold2:#e8c96d;
+  --gold-dim:#c9a84c22;
+  --text:#f0ede8;
+  --text2:#a09890;
+  --text3:#5a5550;
+  --border:#2a2a30;
+  --red:#e05252;
+  --green:#52c97d;
+  --blue:#5294e0;
+  --r:14px;
+  --r-sm:8px;
+}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+.screen{display:none;min-height:100vh;max-width:430px;margin:0 auto;position:relative}
+.screen.active{display:flex;flex-direction:column}
+
+/* TOP BAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;background:var(--bg);position:sticky;top:0;z-index:100;border-bottom:1px solid var(--border)}
+.topbar-logo{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;color:var(--gold)}
+.topbar-title{font-size:16px;font-weight:500}
+.topbar-right{display:flex;gap:12px;align-items:center}
+.icon-btn{background:var(--bg3);border:1px solid var(--border);color:var(--text);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;position:relative;flex-shrink:0}
+.badge{position:absolute;top:-3px;right:-3px;background:var(--gold);color:#000;font-size:9px;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+
+/* BOTTOM NAV */
+.bottom-nav{display:flex;background:var(--bg2);border-top:1px solid var(--border);padding:8px 0 12px;position:sticky;bottom:0;z-index:100}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0;transition:color .2s}
+.nav-item svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.nav-item span{font-size:10px;font-weight:500;letter-spacing:.3px}
+.nav-item{color:var(--text3)}
+.nav-item.active{color:var(--gold)}
+
+/* SCROLL AREA */
+.scroll-area{flex:1;overflow-y:auto;padding:16px 20px 24px;-webkit-overflow-scrolling:touch}
+.scroll-area::-webkit-scrollbar{display:none}
+
+/* CARDS */
+.card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.card-sm{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px}
+
+/* SECTION TITLE */
+.sec-title{font-size:12px;font-weight:600;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;margin:20px 0 10px}
+.sec-title:first-child{margin-top:0}
+
+/* BUTTONS */
+.btn{width:100%;padding:14px;border-radius:var(--r);border:none;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .15s;letter-spacing:.3px}
+.btn-gold{background:var(--gold);color:#0a0a0b}
+.btn-gold:active{background:var(--gold2)}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text2)}
+.btn-outline:active{background:var(--bg4)}
+.btn-sm{padding:8px 14px;width:auto;font-size:13px;border-radius:var(--r-sm)}
+.btn-danger{background:#e0525222;border:1px solid #e0525244;color:var(--red)}
+
+/* INPUTS */
+.input-group{margin-bottom:14px}
+.input-label{font-size:12px;font-weight:500;color:var(--text3);margin-bottom:6px;display:block;letter-spacing:.5px}
+.input{width:100%;background:var(--bg4);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border .2s}
+.input:focus{border-color:var(--gold)}
+.input::placeholder{color:var(--text3)}
+select.input option{background:var(--bg3)}
+
+/* AVATAR */
+.avatar{width:42px;height:42px;border-radius:50%;background:var(--gold-dim);border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:var(--gold);flex-shrink:0}
+
+/* STATUS PILLS */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.3px}
+.pill-green{background:#52c97d18;color:var(--green);border:1px solid #52c97d30}
+.pill-gold{background:var(--gold-dim);color:var(--gold);border:1px solid #c9a84c40}
+.pill-red{background:#e0525218;color:var(--red);border:1px solid #e0525230}
+.pill-blue{background:#5294e018;color:var(--blue);border:1px solid #5294e030}
+
+/* DIVIDER */
+.divider{height:1px;background:var(--border);margin:14px 0}
+
+/* STAT CARDS */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.stat-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:14px}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:1px;color:var(--gold);line-height:1}
+.stat-label{font-size:11px;color:var(--text3);margin-top:4px;font-weight:500;letter-spacing:.5px;text-transform:uppercase}
+.stat-delta{font-size:11px;color:var(--green);margin-top:2px}
+
+/* LOGIN SCREEN */
+#screen-login .bg-art{position:absolute;top:0;left:0;right:0;height:260px;overflow:hidden;z-index:0}
+#screen-login .bg-art::before{content:'';position:absolute;top:-80px;left:-60px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,#c9a84c18 0%,transparent 70%)}
+#screen-login .bg-art::after{content:'';position:absolute;top:40px;right:-40px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,#c9a84c10 0%,transparent 70%)}
+#screen-login .login-content{position:relative;z-index:1;padding:60px 28px 28px;display:flex;flex-direction:column;min-height:100vh}
+.login-logo-area{text-align:center;margin-bottom:40px}
+.login-logo{font-family:'Bebas Neue',sans-serif;font-size:52px;letter-spacing:4px;color:var(--gold);display:block}
+.login-sub{font-size:13px;color:var(--text3);letter-spacing:3px;text-transform:uppercase;margin-top:-4px}
+.login-scissor{font-size:32px;margin-bottom:12px;display:block}
+.divider-or{display:flex;align-items:center;gap:12px;color:var(--text3);font-size:12px;margin:14px 0}
+.divider-or::before,.divider-or::after{content:'';flex:1;height:1px;background:var(--border)}
+.test-accounts{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px;margin-top:10px}
+.test-accounts p{font-size:11px;color:var(--text3);margin-bottom:8px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.test-btn{background:var(--bg4);border:1px solid var(--border);border-radius:var(--r-sm);padding:8px 12px;margin-bottom:6px;width:100%;text-align:left;cursor:pointer;color:var(--text2);font-size:12px;font-family:'DM Sans',sans-serif;transition:all .15s}
+.test-btn:last-child{margin-bottom:0}
+.test-btn:active{background:var(--bg3);color:var(--gold)}
+.test-btn strong{color:var(--text);display:block;font-size:13px;margin-bottom:2px}
+
+/* NOTIFICATION */
+.notif{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start}
+.notif-icon{width:36px;height:36px;border-radius:50%;background:var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;margin-top:1px}
+.notif-body{flex:1}
+.notif-title{font-size:13px;font-weight:600;margin-bottom:2px}
+.notif-text{font-size:12px;color:var(--text2);line-height:1.5}
+.notif-time{font-size:10px;color:var(--text3);margin-top:4px}
+.notif.unread{border-color:#c9a84c44;background:#c9a84c08}
+.notif-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:8px}
+
+/* AGENDA */
+.agenda-day{margin-bottom:16px}
+.agenda-day-label{font-size:12px;font-weight:600;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.agenda-slot{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;cursor:pointer}
+.agenda-slot.occupied{border-color:#c9a84c33;background:#c9a84c08}
+.agenda-slot.empty{border-style:dashed;opacity:.6}
+.slot-time{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.5px;color:var(--gold);width:52px;flex-shrink:0}
+.slot-info{flex:1}
+.slot-name{font-size:13px;font-weight:500}
+.slot-service{font-size:11px;color:var(--text3);margin-top:1px}
+.slot-price{font-size:13px;font-weight:600;color:var(--gold)}
+
+/* PRODUCT CARD */
+.product-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;display:flex;gap:14px;align-items:center}
+.product-icon{width:54px;height:54px;border-radius:var(--r-sm);background:var(--bg4);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.product-info{flex:1}
+.product-name{font-size:14px;font-weight:600;margin-bottom:2px}
+.product-desc{font-size:11px;color:var(--text2);margin-bottom:6px}
+.product-price{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold);letter-spacing:.5px}
+
+/* APPOINTMENT CARD */
+.appt-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.appt-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.appt-service{font-size:16px;font-weight:600}
+.appt-details{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.appt-detail{background:var(--bg4);border-radius:var(--r-sm);padding:8px 10px}
+.appt-detail-label{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px}
+.appt-detail-val{font-size:13px;font-weight:500}
+
+/* CALENDAR */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:14px}
+.cal-header{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px}
+.cal-hdr{text-align:center;font-size:10px;font-weight:600;color:var(--text3);padding:4px 0}
+.cal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:13px;font-weight:400;cursor:pointer;position:relative;transition:all .15s}
+.cal-day:hover{background:var(--bg4)}
+.cal-day.today{background:var(--gold);color:#000;font-weight:700}
+.cal-day.has-appt::after{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--gold)}
+.cal-day.today::after{background:#000}
+.cal-day.other-month{color:var(--text3)}
+.cal-day.selected{background:var(--bg4);border:1px solid var(--gold)}
+
+/* CHART BAR */
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:100px;padding-top:10px}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar{width:100%;border-radius:4px 4px 0 0;background:var(--gold-dim);border-top:2px solid var(--gold);transition:height .3s;min-height:4px}
+.bar-label{font-size:10px;color:var(--text3);text-align:center}
+.bar-val{font-size:10px;color:var(--gold);font-weight:600}
+
+/* TOGGLE */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0}
+.toggle-info{flex:1}
+.toggle-title{font-size:14px;font-weight:500}
+.toggle-sub{font-size:12px;color:var(--text3);margin-top:1px}
+.toggle-switch{width:44px;height:24px;border-radius:12px;background:var(--bg4);border:1px solid var(--border);cursor:pointer;position:relative;flex-shrink:0;transition:background .2s}
+.toggle-switch.on{background:var(--gold)}
+.toggle-switch::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s}
+.toggle-switch.on::after{transform:translateX(20px)}
+
+/* MODAL / TOAST */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--gold);border-radius:var(--r-sm);padding:10px 18px;font-size:13px;font-weight:500;color:var(--gold);z-index:999;white-space:nowrap;opacity:0;transition:opacity .3s;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1}
+
+/* PROFILE HEADER */
+.profile-hero{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:20px;text-align:center;margin-bottom:12px}
+.profile-avatar-big{width:72px;height:72px;border-radius:50%;background:var(--gold-dim);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:26px;color:var(--gold);margin:0 auto 12px}
+.profile-name{font-size:18px;font-weight:600;margin-bottom:2px}
+.profile-role{font-size:12px;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
+
+/* MINI PROGRESS */
+.progress-bar{height:4px;background:var(--bg4);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .5s}
+
+/* BOOKING FLOW */
+.service-option{background:var(--bg3);border:1.5px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .15s}
+.service-option:active,.service-option.selected{border-color:var(--gold);background:var(--gold-dim)}
+.service-option-name{font-size:14px;font-weight:500}
+.service-option-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.service-option-price{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold)}
+.time-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.time-chip{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 8px;text-align:center;cursor:pointer;font-size:13px;font-weight:500;transition:all .15s}
+.time-chip:active,.time-chip.selected{background:var(--gold-dim);border-color:var(--gold);color:var(--gold)}
+.time-chip.unavailable{opacity:.3;pointer-events:none}
+
+/* ANIMATIONS */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.screen.active .scroll-area{animation:fadeIn .2s ease}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.pulse{animation:pulse 2s infinite}
+
+/* SCROLLBAR HIDDEN */
+*{scrollbar-width:none}
+*::-webkit-scrollbar{display:none}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ==================== LOGIN SCREEN ==================== -->
+<div class="screen active" id="screen-login">
+  <div class="bg-art"></div>
+  <div class="login-content">
+    <div class="login-logo-area">
+      <span class="login-scissor">✂️</span>
+      <span class="login-logo">BarberPro</span>
+      <span class="login-sub">Sua barbearia digital</span>
+    </div>
+    <div class="input-group"><label class="input-label">EMAIL</label><input class="input" type="email" id="login-email" placeholder="seu@email.com"></div>
+    <div class="input-group"><label class="input-label">SENHA</label><input class="input" type="password" id="login-pass" placeholder="••••••••"></div>
+    <button class="btn btn-gold" onclick="doLogin()" style="margin-bottom:12px">Entrar</button>
+    <button class="btn btn-outline" onclick="goTo('screen-register')">Criar conta</button>
+    <div class="divider-or">contas de teste</div>
+    <div class="test-accounts">
+      <p>🔑 Acesso rápido</p>
+      <button class="test-btn" onclick="quickLogin('client')"><strong>👤 Cliente — João Silva</strong>joao@email.com / 123456</button>
+      <button class="test-btn" onclick="quickLogin('owner')"><strong>💈 Dono — Carlos Barbeiro</strong>carlos@barberpro.com / admin123</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== REGISTER SCREEN ==================== -->
+<div class="screen" id="screen-register">
+  <div class="topbar">
+    <button class="icon-btn" onclick="goTo('screen-login')" style="font-size:18px">←</button>
+    <span class="topbar-title">Criar conta</span>
+    <div style="width:36px"></div>
+  </div>
+  <div class="scroll-area">
+    <div class="input-group"><label class="input-label">NOME COMPLETO</label><input class="input" type="text" id="reg-name" placeholder="João Silva"></div>
+    <div class="input-group"><label class="input-label">TELEFONE</label><input class="input" type="tel" id="reg-phone" placeholder="(27) 99999-0000"></div>
+    <div class="input-group"><label class="input-label">EMAIL</label><input class="input" type="email" id="reg-email" placeholder="joao@email.com"></div>
+    <div class="input-group"><label class="input-label">SENHA</label><input class="input" type="password" id="reg-pass" placeholder="Mínimo 6 caracteres"></div>
+    <div class="input-group"><label class="input-label">TIPO DE CONTA</label>
+      <select class="input" id="reg-type">
+        <option value="client">Cliente</option>
+        <option value="owner">Dono de Barbearia</option>
+      </select>
+    </div>
+    <button class="btn btn-gold" onclick="doRegister()" style="margin-top:8px">Criar conta</button>
+  </div>
+</div>
+
+<!-- ==================== CLIENT HOME ==================== -->
+<div class="screen" id="screen-client-home">
+  <div class="topbar">
+    <span class="topbar-logo">BarberPro</span>
+    <div class="topbar-right">
+      <div class="icon-btn" onclick="goClientTab('notif')" id="notif-btn">🔔<span class="badge" id="notif-badge">2</span></div>
+      <div class="icon-btn" onclick="goClientTab('profile')">👤</div>
+    </div>
+  </div>
+  <div class="scroll-area" id="client-home-content">
+    <div class="card" style="background:linear-gradient(135deg,#1a1710 0%,#1a1a1e 100%);border-color:#c9a84c33">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="avatar" style="width:50px;height:50px;font-size:18px">JS</div>
+        <div>
+          <div style="font-size:14px;color:var(--text2)">Bem-vindo,</div>
+          <div style="font-size:20px;font-weight:600" id="client-welcome-name">João Silva</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:6px;font-weight:600;letter-spacing:.5px;text-transform:uppercase">Próximo corte</div>
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-size:16px;font-weight:600">Corte + Barba</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px">Sexta, 30 Mai • 14:30</div>
+        </div>
+        <span class="pill pill-gold">Em 3 dias</span>
+      </div>
+      <div class="progress-bar" style="margin-top:12px"><div class="progress-fill" style="width:65%"></div></div>
+      <div style="font-size:10px;color:var(--text3);margin-top:5px">65% do tempo aguardado</div>
+    </div>
+
+    <p class="sec-title">Serviços</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px">
+      <div class="card-sm" onclick="goClientTab('booking')" style="cursor:pointer;text-align:center;padding:18px 12px">
+        <div style="font-size:28px;margin-bottom:8px">✂️</div>
+        <div style="font-size:13px;font-weight:600">Agendar</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">Novo corte</div>
+      </div>
+      <div class="card-sm" onclick="goClientTab('products')" style="cursor:pointer;text-align:center;padding:18px 12px">
+        <div style="font-size:28px;margin-bottom:8px">🧴</div>
+        <div style="font-size:13px;font-weight:600">Produtos</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">Ver vitrine</div>
+      </div>
+    </div>
+
+    <p class="sec-title">Últimos cortes</p>
+    <div class="appt-card">
+      <div class="appt-header">
+        <div>
+          <div class="appt-service">Corte Degradê</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px">Carlos Barbeiro</div>
+        </div>
+        <span class="pill pill-green">Concluído</span>
+      </div>
+      <div class="appt-details">
+        <div class="appt-detail"><div class="appt-detail-label">DATA</div><div class="appt-detail-val">15 Mai</div></div>
+        <div class="appt-detail"><div class="appt-detail-label">HORÁRIO</div><div class="appt-detail-val">10:00</div></div>
+        <div class="appt-detail"><div class="appt-detail-label">VALOR</div><div class="appt-detail-val" style="color:var(--gold)">R$ 40</div></div>
+        <div class="appt-detail"><div class="appt-detail-label">DURAÇÃO</div><div class="appt-detail-val">45 min</div></div>
+      </div>
+    </div>
+    <div class="appt-card">
+      <div class="appt-header">
+        <div>
+          <div class="appt-service">Corte + Barba</div>
+          <div style="font-size:12px;color:var(--text2);margin-top:2px">Carlos Barbeiro</div>
+        </div>
+        <span class="pill pill-green">Concluído</span>
+      </div>
+      <div class="appt-details">
+        <div class="appt-detail"><div class="appt-detail-label">DATA</div><div class="appt-detail-val">28 Abr</div></div>
+        <div class="appt-detail"><div class="appt-detail-label">HORÁRIO</div><div class="appt-detail-val">15:00</div></div>
+        <div class="appt-detail"><div class="appt-detail-label">VALOR</div><div class="appt-detail-val" style="color:var(--gold)">R$ 65</div></div>
+        <div class="appt-detail"><div class="appt-detail-label">DURAÇÃO</div><div class="appt-detail-val">60 min</div></div>
+      </div>
+    </div>
+  </div>
+  <nav class="bottom-nav" id="client-nav">
+    <div class="nav-item active" onclick="goClientTab('home')" id="cnav-home">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+      <span>Início</span>
+    </div>
+    <div class="nav-item" onclick="goClientTab('booking')" id="cnav-booking">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span>Agendar</span>
+    </div>
+    <div class="nav-item" onclick="goClientTab('products')" id="cnav-products">
+      <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <span>Produtos</span>
+    </div>
+    <div class="nav-item" onclick="goClientTab('notif')" id="cnav-notif">
+      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <span>Alertas</span>
+    </div>
+    <div class="nav-item" onclick="goClientTab('profile')" id="cnav-profile">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Perfil</span>
+    </div>
+  </nav>
+</div>
+
+<!-- ==================== CLIENT BOOKING ==================== -->
+<div class="screen" id="screen-client-booking" style="display:none">
+  <div class="topbar">
+    <span class="topbar-logo">BarberPro</span>
+    <div class="topbar-right">
+      <div class="icon-btn" onclick="goClientTab('notif')">🔔<span class="badge" id="notif-badge2">2</span></div>
+      <div class="icon-btn" onclick="goClientTab('profile')">👤</div>
+    </div>
+  </div>
+  <div class="scroll-area">
+    <p class="sec-title" style="margin-top:0">Escolha o serviço</p>
+    <div class="service-option selected" onclick="selectService(this,'Corte Degradê','40','45 min')">
+      <div><div class="service-option-name">Corte Degradê</div><div class="service-option-sub">✂️ 45 min</div></div>
+      <div class="service-option-price">R$40</div>
+    </div>
+    <div class="service-option" onclick="selectService(this,'Corte + Barba','65','60 min')">
+      <div><div class="service-option-name">Corte + Barba</div><div class="service-option-sub">✂️🪒 60 min</div></div>
+      <div class="service-option-price">R$65</div>
+    </div>
+    <div class="service-option" onclick="selectService(this,'Barba','30','30 min')">
+      <div><div class="service-option-name">Barba</div><div class="service-option-sub">🪒 30 min</div></div>
+      <div class="service-option-price">R$30</div>
+    </div>
+    <div class="service-option" onclick="selectService(this,'Luzes / Coloração','80','90 min')">
+      <div><div class="service-option-name">Luzes / Coloração</div><div class="service-option-sub">🎨 90 min</div></div>
+      <div class="service-option-price">R$80</div>
+    </div>
+
+    <p class="sec-title">Escolha a data</p>
+    <div class="card" style="padding:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <button class="icon-btn" onclick="changeMonth(-1)" style="font-size:14px">◀</button>
+        <span style="font-weight:600;font-size:14px" id="cal-month-label">Maio 2026</span>
+        <button class="icon-btn" onclick="changeMonth(1)" style="font-size:14px">▶</button>
+      </div>
+      <div class="cal-header" id="cal-headers"></div>
+      <div class="cal-grid" id="cal-grid"></div>
+    </div>
+
+    <p class="sec-title">Escolha o horário</p>
+    <div class="time-grid" id="time-grid"></div>
+
+    <button class="btn btn-gold" onclick="confirmBooking()">Confirmar Agendamento</button>
+  </div>
+  <nav class="bottom-nav">
+    <div class="nav-item" onclick="goClientTab('home')" id="cnav2-home">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg><span>Início</span>
+    </div>
+    <div class="nav-item active" id="cnav2-booking">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span>Agendar</span>
+    </div>
+    <div class="nav-item" onclick="goClientTab('products')">
+      <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span>Produtos</span>
+    </div>
+    <div class="nav-item" onclick="goClientTab('notif')">
+      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><span>Alertas</span>
+    </div>
+    <div class="nav-item" onclick="goClientTab('profile')">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Perfil</span>
+    </div>
+  </nav>
+</div>
+
+<!-- ==================== CLIENT PRODUCTS ==================== -->
+<div class="screen" id="screen-client-products" style="display:none">
+  <div class="topbar">
+    <span class="topbar-logo">BarberPro</span>
+    <div class="topbar-right">
+      <div class="icon-btn" onclick="goClientTab('notif')">🔔<span class="badge">2</span></div>
+      <div class="icon-btn" onclick="goClientTab('profile')">👤</div>
+    </div>
+  </div>
+  <div class="scroll-area">
+    <p class="sec-title" style="margin-top:0">Produtos disponíveis</p>
+    <div id="products-list-client"></div>
+  </div>
+  <nav class="bottom-nav">
+    <div class="nav-item" onclick="goClientTab('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg><span>Início</span></div>
+    <div class="nav-item" onclick="goClientTab('booking')"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span>Agendar</span></div>
+    <div class="nav-item active"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span>Produtos</span></div>
+    <div class="nav-item" onclick="goClientTab('notif')"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><span>Alertas</span></div>
+    <div class="nav-item" onclick="goClientTab('profile')"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Perfil</span></div>
+  </nav>
+</div>
+
+<!-- ==================== CLIENT NOTIFICATIONS ==================== -->
+<div class="screen" id="screen-client-notif" style="display:none">
+  <div class="topbar">
+    <span class="topbar-logo">BarberPro</span>
+    <div class="topbar-right">
+      <button class="btn btn-outline btn-sm" onclick="clearNotifs()" style="font-size:11px;padding:6px 12px">Limpar</button>
+    </div>
+  </div>
+  <div class="scroll-area">
+    <div id="notif-list">
+      <div class="notif unread">
+        <div class="notif-icon">✂️</div>
+        <div class="notif-body">
+          <div class="notif-title">Corte em 2 horas!</div>
+          <div class="notif-text">Seu agendamento de Corte + Barba está chegando. Hoje às 14:30 com Carlos Barbeiro.</div>
+          <div class="notif-time">Hoje, 12:30</div>
+        </div>
+        <div class="notif-dot"></div>
+      </div>
+      <div class="notif unread">
+        <div class="notif-icon">⏰</div>
+        <div class="notif-body">
+          <div class="notif-title">Lembrete: amanhã às 10h</div>
+          <div class="notif-text">Você tem um corte Degradê agendado para amanhã, sexta às 10:00.</div>
+          <div class="notif-time">Hoje, 09:00</div>
+        </div>
+        <div class="notif-dot"></div>
+      </div>
+      <div class="notif">
+        <div class="notif-icon">✅</div>
+        <div class="notif-body">
+          <div class="notif-title">Agendamento confirmado</div>
+          <div class="notif-text">Seu corte foi confirmado para Sexta, 30 Mai às 14:30.</div>
+          <div class="notif-time">Ontem, 16:00</div>
+        </div>
+      </div>
+      <div class="notif">
+        <div class="notif-icon">🧴</div>
+        <div class="notif-body">
+          <div class="notif-title">Produto novo disponível</div>
+          <div class="notif-text">Pomada Matte Premium chegou na barbearia. Confira!</div>
+          <div class="notif-time">23 Mai, 10:00</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <nav class="bottom-nav">
+    <div class="nav-item" onclick="goClientTab('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg><span>Início</span></div>
+    <div class="nav-item" onclick="goClientTab('booking')"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span>Agendar</span></div>
+    <div class="nav-item" onclick="goClientTab('products')"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span>Produtos</span></div>
+    <div class="nav-item active"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><span>Alertas</span></div>
+    <div class="nav-item" onclick="goClientTab('profile')"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Perfil</span></div>
+  </nav>
+</div>
+
+<!-- ==================== CLIENT PROFILE ==================== -->
+<div class="screen" id="screen-client-profile" style="display:none">
+  <div class="topbar">
+    <span class="topbar-logo">BarberPro</span>
+    <div class="topbar-right"><div class="icon-btn" onclick="showToast('Em desenvolvimento')">⚙️</div></div>
+  </div>
+  <div class="scroll-area">
+    <div class="profile-hero">
+      <div class="profile-avatar-big">JS</div>
+      <div class="profile-name" id="profile-name-disp">João Silva</div>
+      <div class="profile-role">Cliente</div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;margin-bottom:12px">
+        <span style="font-size:14px;font-weight:600">Cortes realizados</span>
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold)">14</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:12px">
+        <span style="font-size:14px;font-weight:600">Total gasto</span>
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold)">R$ 620</span>
+      </div>
+      <div style="display:flex;justify-content:space-between">
+        <span style="font-size:14px;font-weight:600">Cliente desde</span>
+        <span style="font-size:14px;color:var(--text2)">Jan 2025</span>
+      </div>
+    </div>
+    <p class="sec-title">Configurações</p>
+    <div class="card">
+      <div class="toggle-row">
+        <div class="toggle-info"><div class="toggle-title">Notificações</div><div class="toggle-sub">Alertas de agendamento</div></div>
+        <div class="toggle-switch on" onclick="toggleSwitch(this)"></div>
+      </div>
+      <div class="divider"></div>
+      <div class="toggle-row">
+        <div class="toggle-info"><div class="toggle-title">Lembrete 2h antes</div><div class="toggle-sub">Aviso quando faltam 2 horas</div></div>
+        <div class="toggle-switch on" onclick="toggleSwitch(this)"></div>
+      </div>
+      <div class="divider"></div>
+      <div class="toggle-row">
+        <div class="toggle-info"><div class="toggle-title">Novidades de produtos</div><div class="toggle-sub">Quando chegar produto novo</div></div>
+        <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
+      </div>
+    </div>
+    <button class="btn btn-danger" onclick="logout()" style="margin-top:16px">Sair da conta</button>
+  </div>
+  <nav class="bottom-nav">
+    <div class="nav-item" onclick="goClientTab('home')"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg><span>Início</span></div>
+    <div class="nav-item" onclick="goClientTab('booking')"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span>Agendar</span></div>
+    <div class="nav-item" onclick="goClientTab('products')"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span>Produtos</span></div>
+    <div class="nav-item" onclick="goClientTab('notif')"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><span>Alertas</span></div>
+    <div class="nav-item active"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Perfil</span></div>
+  </nav>
+</div>
+
+<!-- ==================== OWNER DASHBOARD ==================== -->
+<div class="screen" id="screen-owner-dash" style="display:none">
+  <div class="topbar">
+    <span class="topbar-logo">BarberPro</span>
+    <div class="topbar-right">
+      <div class="icon-btn">💈</div>
+    </div>
+  </div>
+  <div class="scroll-area">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <div class="avatar" style="width:44px;height:44px;font-size:16px">CB</div>
+      <div>
+        <div style="font-size:13px;color:var(--text2)">Painel do barbeiro</div>
+        <div style="font-size:17px;font-weight:600">Carlos Barbeiro</div>
+      </div>
+      <span class="pill pill-green" style="margin-left:auto">Aberto</span>
+    </div>
+
+    <p class="sec-title" style="margin-top:0">Este mês — Maio 2026</p>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num">47</div><div class="stat-label">Cortes</div><div class="stat-delta">↑ 12% vs Abr</div></div>
+      <div class="stat-card"><div class="stat-num" style="font-size:28px">R$2.1k</div><div class="stat-label">Receita</div><div class="stat-delta">↑ 8% vs Abr</div></div>
+      <div class="stat-card"><div class="stat-num">4.9</div><div class="stat-label">Avaliação</div><div class="stat-delta">★ 23 reviews</div></div>
+      <div class="stat-card"><div class="stat-num">6</div><div class="stat-label">Esta semana</div><div class="stat-delta">3 ainda virão</div></div>
+    </div>
+
+    <p class="sec-title">Cortes por semana</p>
+    <div class="card" style="padding:14px">
+      <div class="bar-chart" id="week-chart"></div>
+    </div>
+
+    <p class="sec-title">Próximos hoje</p>
+    <div class="agenda-slot occupied">
+      <div class="slot-time">14:30</div>
+      <div class="slot-info"><div class="slot-name">João Silva</div><div class="slot-service">Corte + Barba</div></div>
+      <span class="pill pill-gold">Em 2h</span>
+    </div>
+    <div class="agenda-slot occupied">
+      <div class="slot-time">16:00</div>
+      <div class="slot-info"><div class="slot-name">Pedro Oliveira</div><div class="slot-service">Corte Degradê</div></div>
+      <span class="pill pill-blue">Confirm.</span>
+    </div>
+    <div class="agenda-slot occupied">
+      <div class="slot-time">17:30</div>
+      <div class="slot-info"><div class="slot-name">Rafael Costa</div><div class="slot-service">Barba</div></div>
+      <span class="pill pill-blue">Confirm.</span>
+    </div>
+  </div>
+  <nav class="bottom-nav" id="owner-nav">
+    <div class="nav-item active" onclick="goOwnerTab('dash')" id="onav-dash">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Painel</span>
+    </div>
+    <div class="nav-item" onclick="goOwnerTab('agenda')" id="onav-agenda">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span>Agenda</span>
+    </div>
+    <div class="nav-item" onclick="goOwnerTab('products')" id="onav-products">
+      <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span>Produtos</span>
+    </div>
+    <div class="nav-item" onclick="goOwnerTab('profile')" id="onav-profile">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Perfil</span>
+    </div>
+  </nav>
+</div>
+
+<!-- ==================== OWNER AGENDA ==================== -->
+<div class="screen" id="screen-owner-agenda" style="display:none">
+  <div class="topbar">
+    <span class="topbar-logo">BarberPro</span>
+    <div class="topbar-right">
+      <button class="btn btn-gold btn-sm" onclick="showToast('Novo agendamento manual!')" style="font-size:12px">+ Agendar</button>
+    </div>
+  </div>
+  <div class="scroll-area">
+    <p class="sec-title" style="margin-top:0">Semana — 27 a 31 Mai</p>
+    <div class="agenda-day">
+      <div class="agenda-day-label">Quarta, 28 Mai</div>
+      <div class="agenda-slot occupied">
+        <div class="slot-time">09:00</div>
+        <div class="slot-info"><div class="slot-name">Lucas Mendes</div><div class="slot-service">Corte Degradê • 45min</div></div>
+        <div class="slot-price">R$40</div>
+      </div>
+      <div class="agenda-slot occupied">
+        <div class="slot-time">10:00</div>
+        <div class="slot-info"><div class="slot-name">Bruno Alves</div><div class="slot-service">Barba • 30min</div></div>
+        <div class="slot-price">R$30</div>
+      </div>
+      <div class="agenda-slot empty">
+        <div class="slot-time">11:00</div>
+        <div class="slot-info"><div class="slot-name" style="color:var(--text3)">Horário livre</div></div>
+      </div>
+    </div>
+    <div class="agenda-day">
+      <div class="agenda-day-label">Quinta, 29 Mai</div>
+      <div class="agenda-slot occupied">
+        <div class="slot-time">10:00</div>
+        <div class="slot-info"><div class="slot-name">Marcos Lima</div><div class="slot-service">Corte + Barba • 60min</div></div>
+        <div class="slot-price">R$65</div>
+      </div>
+      <div class="agenda-slot occupied">
+        <div class="slot-time">14:00</div>
+        <div class="slot-info"><div class="slot-name">Felipe Santos</div><div class="slot-service">Luzes • 90min</div></div>
+        <div class="slot-price">R$80</div>
+      </div>
+      <div class="agenda-slot empty">
+        <div class="slot-time">16:00</div>
+        <div class="slot-info"><div class="slot-name" style="color:var(--text3)">Horário livre</div></div>
+      </div>
+    </div>
+    <div class="agenda-day">
+      <div class="agenda-day-label">Sexta, 30 Mai</div>
+      <div class="agenda-slot occupied">
+        <div class="slot-time">14:30</div>
+        <div class="slot-info"><div class="slot-name">João Silva</div><div class="slot-service">Corte + Barba • 60min</div></div>
+        <div class="slot-price">R$65</div>
+      </div>
+      <div class="agenda-slot occupied">
+        <div class="slot-time">16:00</div>
+        <div class="slot-info"><div class="slot-name">Pedro Oliveira</div><div class="slot-service">Corte Degradê • 45min</div></div>
+        <div class="slot-price">R$40</div>
+      </div>
+      <div class="agenda-slot occupied">
+        <div class="slot-time">17:30</div>
+        <div class="slot-info"><div class="slot-name">Rafael Costa</div><div class="slot-service">Barba • 30min</div></div>
+        <div class="slot-price">R$30</div>
+      </div>
+    </div>
+  </div>
+  <nav class="bottom-nav">
+    <div class="nav-item" onclick="goOwnerTab('dash')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Painel</span></div>
+    <div class="nav-item active"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span>Agenda</span></div>
+    <div class="nav-item" onclick="goOwnerTab('products')"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span>Produtos</span></div>
+    <div class="nav-item" onclick="goOwnerTab('profile')"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Perfil</span></div>
+  </nav>
+</div>
+
+<!-- ==================== OWNER PRODUCTS ==================== -->
+<div class="screen" id="screen-owner-products" style="display:none">
+  <div class="topbar">
+    <span class="topbar-logo">BarberPro</span>
+    <div class="topbar-right">
+      <button class="btn btn-gold btn-sm" onclick="showAddProduct()" style="font-size:12px">+ Produto</button>
+    </div>
+  </div>
+  <div class="scroll-area">
+    <p class="sec-title" style="margin-top:0">Catálogo de produtos</p>
+    <div id="products-list-owner"></div>
+    <div id="add-product-form" style="display:none">
+      <div class="card" style="border-color:var(--gold);margin-top:4px">
+        <div style="font-size:14px;font-weight:600;margin-bottom:14px;color:var(--gold)">Novo produto</div>
+        <div class="input-group"><label class="input-label">EMOJI / ÍCONE</label><input class="input" type="text" id="prod-icon" placeholder="🧴" style="font-size:20px"></div>
+        <div class="input-group"><label class="input-label">NOME DO PRODUTO</label><input class="input" type="text" id="prod-name" placeholder="Pomada Matte Premium"></div>
+        <div class="input-group"><label class="input-label">DESCRIÇÃO</label><input class="input" type="text" id="prod-desc" placeholder="Fixação forte, acabamento fosco"></div>
+        <div class="input-group"><label class="input-label">PREÇO (R$)</label><input class="input" type="number" id="prod-price" placeholder="45.00"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px">
+          <button class="btn btn-outline" onclick="hideAddProduct()">Cancelar</button>
+          <button class="btn btn-gold" onclick="addProduct()">Salvar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <nav class="bottom-nav">
+    <div class="nav-item" onclick="goOwnerTab('dash')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Painel</span></div>
+    <div class="nav-item" onclick="goOwnerTab('agenda')"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span>Agenda</span></div>
+    <div class="nav-item active"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span>Produtos</span></div>
+    <div class="nav-item" onclick="goOwnerTab('profile')"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Perfil</span></div>
+  </nav>
+</div>
+
+<!-- ==================== OWNER PROFILE ==================== -->
+<div class="screen" id="screen-owner-profile" style="display:none">
+  <div class="topbar"><span class="topbar-logo">BarberPro</span></div>
+  <div class="scroll-area">
+    <div class="profile-hero">
+      <div class="profile-avatar-big">CB</div>
+      <div class="profile-name">Carlos Barbeiro</div>
+      <div class="profile-role">💈 Dono da Barbearia</div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;margin-bottom:12px"><span style="font-size:14px;font-weight:600">Nome da Barbearia</span><span style="font-size:14px;color:var(--text2)">BarberPro VIX</span></div>
+      <div class="divider"></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:12px;padding-top:12px"><span style="font-size:14px;font-weight:600">Endereço</span><span style="font-size:13px;color:var(--text2);text-align:right">Av. Vitória, 100<br>Vitória - ES</span></div>
+      <div class="divider"></div>
+      <div style="display:flex;justify-content:space-between;padding-top:12px"><span style="font-size:14px;font-weight:600">Telefone</span><span style="font-size:14px;color:var(--text2)">(27) 9 9999-0000</span></div>
+    </div>
+    <p class="sec-title">Horário de funcionamento</p>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px"><span style="font-size:13px;color:var(--text2)">Segunda – Sexta</span><span style="font-size:13px;font-weight:600;color:var(--gold)">09:00 – 19:00</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="font-size:13px;color:var(--text2)">Sábado</span><span style="font-size:13px;font-weight:600;color:var(--gold)">09:00 – 17:00</span></div>
+    </div>
+    <button class="btn btn-danger" onclick="logout()" style="margin-top:16px">Sair da conta</button>
+  </div>
+  <nav class="bottom-nav">
+    <div class="nav-item" onclick="goOwnerTab('dash')"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Painel</span></div>
+    <div class="nav-item" onclick="goOwnerTab('agenda')"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span>Agenda</span></div>
+    <div class="nav-item" onclick="goOwnerTab('products')"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span>Produtos</span></div>
+    <div class="nav-item active"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Perfil</span></div>
+  </nav>
+</div>
+
+<script>
+const USERS={
+  'joao@email.com':{pass:'123456',role:'client',name:'João Silva',initials:'JS'},
+  'carlos@barberpro.com':{pass:'admin123',role:'owner',name:'Carlos Barbeiro',initials:'CB'}
+};
+
+let currentRole='';
+let selectedService='Corte Degradê';
+let selectedServicePrice='40';
+let selectedServiceDur='45 min';
+let selectedDate='';
+let selectedTime='';
+let calYear=2026, calMonth=4;
+
+const products=[
+  {icon:'🧴',name:'Pomada Matte Premium',desc:'Fixação forte, acabamento fosco',price:'45,00'},
+  {icon:'🧖',name:'Óleo de Barba',desc:'Hidrata e amacia, aroma amadeirado',price:'38,00'},
+  {icon:'✂️',name:'Shampoo Anticaspa Pro',desc:'Uso profissional, fragrância masculina',price:'32,00'},
+  {icon:'💆',name:'Cera Modeladora',desc:'Fixação média, brilho natural',price:'28,00'},
+  {icon:'🪒',name:'Gel Pós-Barba',desc:'Acalma a pele, evita irritação',price:'22,00'},
+];
+
+function goTo(id){
+  document.querySelectorAll('.screen').forEach(s=>{s.classList.remove('active');s.style.display='none'});
+  const s=document.getElementById(id);
+  s.style.display='flex';
+  s.classList.add('active');
+}
+
+function quickLogin(role){
+  if(role==='client'){document.getElementById('login-email').value='joao@email.com';document.getElementById('login-pass').value='123456';}
+  else{document.getElementById('login-email').value='carlos@barberpro.com';document.getElementById('login-pass').value='admin123';}
+  setTimeout(doLogin,150);
+}
+
+function doLogin(){
+  const e=document.getElementById('login-email').value.trim();
+  const p=document.getElementById('login-pass').value;
+  const u=USERS[e];
+  if(!u){showToast('Email não encontrado');return;}
+  if(u.pass!==p){showToast('Senha incorreta');return;}
+  currentRole=u.role;
+  if(u.role==='client'){
+    document.getElementById('client-welcome-name').textContent=u.name;
+    document.getElementById('profile-name-disp').textContent=u.name;
+    renderProductsClient();
+    buildCalendar();
+    buildTimeGrid();
+    goClientTab('home');
+  } else {
+    renderProductsOwner();
+    buildWeekChart();
+    goOwnerTab('dash');
+  }
+}
+
+function doRegister(){
+  const name=document.getElementById('reg-name').value.trim();
+  const email=document.getElementById('reg-email').value.trim();
+  const pass=document.getElementById('reg-pass').value;
+  if(!name||!email||!pass){showToast('Preencha todos os campos');return;}
+  if(pass.length<6){showToast('Senha: mínimo 6 caracteres');return;}
+  showToast('Conta criada! Faça login ✓');
+  setTimeout(()=>goTo('screen-login'),1200);
+}
+
+function goClientTab(tab){
+  const map={home:'screen-client-home',booking:'screen-client-booking',products:'screen-client-products',notif:'screen-client-notif',profile:'screen-client-profile'};
+  goTo(map[tab]||'screen-client-home');
+  if(tab==='booking'){buildCalendar();buildTimeGrid();}
+}
+
+function goOwnerTab(tab){
+  const map={dash:'screen-owner-dash',agenda:'screen-owner-agenda',products:'screen-owner-products',profile:'screen-owner-profile'};
+  goTo(map[tab]||'screen-owner-dash');
+}
+
+function logout(){goTo('screen-login');showToast('Até logo! 👋');}
+
+function selectService(el,name,price,dur){
+  document.querySelectorAll('.service-option').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedService=name;selectedServicePrice=price;selectedServiceDur=dur;
+}
+
+const DAYS_PT=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const MONTHS_PT=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const APPT_DAYS=[27,29,30];
+
+function buildCalendar(){
+  const grid=document.getElementById('cal-grid');
+  const hdrs=document.getElementById('cal-headers');
+  if(!grid)return;
+  document.getElementById('cal-month-label').textContent=MONTHS_PT[calMonth]+' '+calYear;
+  hdrs.innerHTML=DAYS_PT.map(d=>`<div class="cal-hdr">${d}</div>`).join('');
+  const first=new Date(calYear,calMonth,1).getDay();
+  const total=new Date(calYear,calMonth+1,0).getDate();
+  const prevTotal=new Date(calYear,calMonth,0).getDate();
+  let html='';
+  for(let i=0;i<first;i++){html+=`<div class="cal-day other-month">${prevTotal-first+i+1}</div>`;}
+  for(let d=1;d<=total;d++){
+    const isToday=d===27&&calMonth===4&&calYear===2026;
+    const hasAppt=APPT_DAYS.includes(d)&&calMonth===4;
+    const isSel=selectedDate===`${calYear}-${calMonth}-${d}`;
+    html+=`<div class="cal-day${isToday?' today':''}${hasAppt?' has-appt':''}${isSel&&!isToday?' selected':''}" onclick="selectDate(${d})">${d}</div>`;
+  }
+  const remain=42-(first+total);
+  for(let d=1;d<=remain;d++){html+=`<div class="cal-day other-month">${d}</div>`;}
+  grid.innerHTML=html;
+}
+
+function selectDate(d){selectedDate=`${calYear}-${calMonth}-${d}`;buildCalendar();showToast(`${d} de ${MONTHS_PT[calMonth]} selecionado`);}
+
+function changeMonth(dir){calMonth+=dir;if(calMonth>11){calMonth=0;calYear++;}if(calMonth<0){calMonth=11;calYear--;}buildCalendar();}
+
+const TIMES=['09:00','09:30','10:00','10:30','11:00','11:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00'];
+const UNAVAIL=['10:00','11:00','14:30','16:00'];
+
+function buildTimeGrid(){
+  const g=document.getElementById('time-grid');
+  if(!g)return;
+  g.innerHTML=TIMES.map(t=>{
+    const unavail=UNAVAIL.includes(t);
+    const sel=selectedTime===t;
+    return `<div class="time-chip${unavail?' unavailable':''}${sel?' selected':''}" onclick="selectTime('${t}')">${t}</div>`;
+  }).join('');
+}
+
+function selectTime(t){selectedTime=t;buildTimeGrid();}
+
+function confirmBooking(){
+  if(!selectedDate){showToast('Escolha uma data primeiro');return;}
+  if(!selectedTime){showToast('Escolha um horário');return;}
+  showToast(`✅ Agendado: ${selectedService} às ${selectedTime}`);
+  setTimeout(()=>goClientTab('home'),1500);
+}
+
+function renderProductsClient(){
+  const el=document.getElementById('products-list-client');
+  if(!el)return;
+  el.innerHTML=products.map(p=>`
+    <div class="product-card">
+      <div class="product-icon">${p.icon}</div>
+      <div class="product-info">
+        <div class="product-name">${p.name}</div>
+        <div class="product-desc">${p.desc}</div>
+        <div class="product-price">R$ ${p.price}</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderProductsOwner(){
+  const el=document.getElementById('products-list-owner');
+  if(!el)return;
+  el.innerHTML=products.map((p,i)=>`
+    <div class="product-card">
+      <div class="product-icon">${p.icon}</div>
+      <div class="product-info">
+        <div class="product-name">${p.name}</div>
+        <div class="product-desc">${p.desc}</div>
+        <div class="product-price">R$ ${p.price}</div>
+      </div>
+      <button class="btn btn-danger btn-sm" onclick="removeProduct(${i})" style="margin-left:8px;flex-shrink:0">🗑</button>
+    </div>`).join('');
+}
+
+function showAddProduct(){document.getElementById('add-product-form').style.display='block';}
+function hideAddProduct(){document.getElementById('add-product-form').style.display='none';}
+
+function addProduct(){
+  const icon=document.getElementById('prod-icon').value||'📦';
+  const name=document.getElementById('prod-name').value.trim();
+  const desc=document.getElementById('prod-desc').value.trim();
+  const price=parseFloat(document.getElementById('prod-price').value)||0;
+  if(!name){showToast('Informe o nome do produto');return;}
+  products.push({icon,name,desc,price:price.toFixed(2).replace('.',',')});
+  renderProductsOwner();renderProductsClient();
+  hideAddProduct();
+  document.getElementById('prod-icon').value='';document.getElementById('prod-name').value='';
+  document.getElementById('prod-desc').value='';document.getElementById('prod-price').value='';
+  showToast('Produto adicionado ✓');
+}
+
+function removeProduct(i){products.splice(i,1);renderProductsOwner();renderProductsClient();showToast('Produto removido');}
+
+function clearNotifs(){
+  document.querySelectorAll('.notif.unread').forEach(n=>{n.classList.remove('unread');});
+  document.querySelectorAll('.notif-dot').forEach(d=>d.remove());
+  document.getElementById('notif-badge').textContent='0';
+  document.getElementById('notif-badge').style.display='none';
+  const b2=document.getElementById('notif-badge2');
+  if(b2){b2.style.display='none';}
+  showToast('Notificações lidas ✓');
+}
+
+function buildWeekChart(){
+  const el=document.getElementById('week-chart');
+  if(!el)return;
+  const data=[{l:'S1',v:8},{l:'S2',v:11},{l:'S3',v:9},{l:'S4',v:14},{l:'Atual',v:6}];
+  const max=Math.max(...data.map(d=>d.v));
+  el.innerHTML=data.map(d=>{
+    const h=Math.round((d.v/max)*80);
+    return `<div class="bar-wrap"><div class="bar-val">${d.v}</div><div class="bar" style="height:${h}px"></div><div class="bar-label">${d.l}</div></div>`;
+  }).join('');
+}
+
+function toggleSwitch(el){el.classList.toggle('on');}
+
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+</script>
+</body>
+</html>
