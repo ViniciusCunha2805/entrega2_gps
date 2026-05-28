@@ -63,7 +63,8 @@ O projeto foi construído como **exercício completo de arquitetura MVC em React
 | Dashboard com métricas reais | — | ✅ |
 | Agenda com filtros de status | — | ✅ |
 
-**🔗 Acesse agora:** [https://deploy-entrega2gps.vercel.app/](https://deploy-entrega2gps.vercel.app/)
+**🔗 Acesse agora:** [https://deploy-entrega2gps.vercel.app/](https://deploy-entrega2gps.vercel.app/)<br>
+
 **🔗 Video demonstrativo:** [https://youtu.be/K1NcUt4PWaI)
 ---
 
