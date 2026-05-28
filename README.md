@@ -64,7 +64,7 @@ O projeto foi construído como **exercício completo de arquitetura MVC em React
 | Agenda com filtros de status | — | ✅ |
 
 **🔗 Acesse agora:** [https://deploy-entrega2gps.vercel.app/](https://deploy-entrega2gps.vercel.app/)
-
+**🔗 Video demonstrativo:** [https://youtu.be/K1NcUt4PWaI)
 ---
 
 ## ✅ Funcionalidades
