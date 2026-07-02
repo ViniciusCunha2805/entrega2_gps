@@ -36,7 +36,12 @@ export default function CBooking({ TopBar, Nav, setTab }) {
     state.services[0] ||
     {};
 
-  const selDay = selDate ? new Date(selDate).getDay() : null;
+  const selDay = selDate
+    ? (() => {
+        const [y, m, d] = selDate.split('-').map(Number);
+        return new Date(y, m, d).getDay();
+      })()
+    : null;
   const scheduleMatch =
     selDay !== null && selTime
       ? state.serviceSchedules.find(
