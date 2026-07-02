@@ -5,12 +5,12 @@
 
 export default function appReducer(state, action) {
   switch (action.type) {
-
     // ── Autenticação ──────────────────────────────
-    case 'LOGIN': {
+    case "LOGIN": {
       const user = state.users[action.email];
-      if (!user)              return { ...state, toast: 'E-mail não encontrado' };
-      if (user.pass !== action.pass) return { ...state, toast: 'Senha incorreta' };
+      if (!user) return { ...state, toast: "E-mail não encontrado" };
+      if (user.pass !== action.pass)
+        return { ...state, toast: "Senha incorreta" };
       return {
         ...state,
         currentUser: { ...user, email: action.email },
@@ -18,18 +18,18 @@ export default function appReducer(state, action) {
       };
     }
 
-    case 'LOGOUT':
+    case "LOGOUT":
       return { ...state, currentUser: null };
 
-    case 'REGISTER': {
+    case "REGISTER": {
       if (state.users[action.email])
-        return { ...state, toast: 'E-mail já cadastrado' };
+        return { ...state, toast: "E-mail já cadastrado" };
 
       const initials = action.name
-        .split(' ')
+        .split(" ")
         .map((w) => w[0])
         .slice(0, 2)
-        .join('')
+        .join("")
         .toUpperCase();
 
       return {
@@ -40,17 +40,17 @@ export default function appReducer(state, action) {
             pass: action.pass,
             role: action.role,
             name: action.name,
-            phone: action.phone || '',
+            phone: action.phone || "",
             initials,
-            since: 'Mai 2026',
+            since: "Mai 2026",
           },
         },
-        toast: 'Conta criada! Faça login ✓',
+        toast: "Conta criada! Faça login ✓",
       };
     }
 
     // ── Agendamentos ──────────────────────────────
-    case 'BOOK': {
+    case "BOOK": {
       const newAppt = {
         id: state.nextId,
         clientEmail: state.currentUser.email,
@@ -60,14 +60,14 @@ export default function appReducer(state, action) {
         dur: action.dur,
         date: action.date,
         time: action.time,
-        status: 'confirmed',
+        status: "confirmed",
       };
       const newNotif = {
         id: state.nextId + 1,
-        icon: '✅',
-        title: 'Agendamento confirmado',
+        icon: "✅",
+        title: "Agendamento confirmado",
         text: `${action.service} confirmado para ${action.dateLabel} às ${action.time}. Valor: R$ ${action.price}.`,
-        time: 'Agora',
+        time: "Agora",
         read: false,
       };
       return {
@@ -79,29 +79,29 @@ export default function appReducer(state, action) {
       };
     }
 
-    case 'CANCEL_APPT':
+    case "CANCEL_APPT":
       return {
         ...state,
         appointments: state.appointments.map((a) =>
-          a.id === action.id ? { ...a, status: 'cancelled' } : a
+          a.id === action.id ? { ...a, status: "cancelled" } : a,
         ),
-        toast: 'Agendamento cancelado',
+        toast: "Agendamento cancelado",
       };
 
-    case 'COMPLETE_APPT':
+    case "COMPLETE_APPT":
       return {
         ...state,
         appointments: state.appointments.map((a) =>
-          a.id === action.id ? { ...a, status: 'completed' } : a
+          a.id === action.id ? { ...a, status: "completed" } : a,
         ),
-        toast: 'Marcado como concluído ✓',
+        toast: "Marcado como concluído ✓",
       };
 
     // ── Produtos ──────────────────────────────────
-    case 'ADD_PRODUCT': {
+    case "ADD_PRODUCT": {
       const product = {
         id: state.nextId,
-        icon: action.icon || '📦',
+        icon: action.icon || "📦",
         name: action.name,
         desc: action.desc,
         price: action.price,
@@ -110,30 +110,77 @@ export default function appReducer(state, action) {
         ...state,
         products: [...state.products, product],
         nextId: state.nextId + 1,
-        toast: 'Produto adicionado ✓',
+        toast: "Produto adicionado ✓",
       };
     }
 
-    case 'REMOVE_PRODUCT':
+    case "REMOVE_PRODUCT":
       return {
         ...state,
         products: state.products.filter((p) => p.id !== action.id),
-        toast: 'Produto removido',
+        toast: "Produto removido",
+      };
+
+    case "UPDATE_SERVICE":
+      return {
+        ...state,
+        services: state.services.map((svc) =>
+          svc.name === action.name
+            ? { ...svc, price: action.price, dur: action.dur }
+            : svc,
+        ),
+        toast: `Serviço atualizado: ${action.name}`,
+      };
+
+    case "ADD_SERVICE_SCHEDULE": {
+      const schedule = {
+        id: state.nextId,
+        service: action.service,
+        day: action.day,
+        time: action.time,
+        price: action.price,
+        dur: action.dur,
+      };
+      return {
+        ...state,
+        serviceSchedules: [
+          ...state.serviceSchedules.filter(
+            (item) =>
+              !(
+                item.service === action.service &&
+                item.day === action.day &&
+                item.time === action.time
+              ),
+          ),
+          schedule,
+        ],
+        nextId: state.nextId + 1,
+        toast: "Horário especial salvo ✓",
+      };
+    }
+
+    case "REMOVE_SERVICE_SCHEDULE":
+      return {
+        ...state,
+        serviceSchedules: state.serviceSchedules.filter(
+          (item) => item.id !== action.id,
+        ),
+        toast: "Horário especial removido",
       };
 
     // ── Notificações ──────────────────────────────
-    case 'READ_ALL_NOTIFS':
+    case "READ_ALL_NOTIFS":
       return {
         ...state,
         notifications: state.notifications.map((n) => ({ ...n, read: true })),
-        toast: 'Notificações lidas ✓',
+        toast: "Notificações lidas ✓",
       };
 
     // ── Toast ─────────────────────────────────────
-    case 'TOAST':
+    case "TOAST":
       return { ...state, toast: action.msg };
 
-    case 'CLEAR_TOAST':
+    case "CLEAR_TOAST":
       return { ...state, toast: null };
 
     default:
