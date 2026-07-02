@@ -4,7 +4,6 @@ import { DAYS_PT, TIMES } from "../../models/initialState.js";
 
 export default function OServices({ Nav }) {
   const { state, dispatch } = useApp();
-  const [edits, setEdits] = useState({});
   const [schedule, setSchedule] = useState({
     service: state.services[0]?.name || "",
     day: 1,
@@ -14,14 +13,6 @@ export default function OServices({ Nav }) {
   });
 
   useEffect(() => {
-    setEdits(
-      Object.fromEntries(
-        state.services.map((service) => [
-          service.name,
-          { price: service.price.toString(), dur: service.dur },
-        ]),
-      ),
-    );
     if (state.services[0]) {
       setSchedule((prev) => ({
         ...prev,
@@ -32,35 +23,10 @@ export default function OServices({ Nav }) {
     }
   }, [state.services]);
 
-  const setEditField = (name, key) => (event) => {
-    const value = event.target.value;
-    setEdits((prev) => ({
-      ...prev,
-      [name]: {
-        ...prev[name],
-        [key]: value,
-      },
-    }));
-  };
-
   const setScheduleField = (key) => (event) => {
     const value = event.target.value;
     setSchedule((prev) => ({ ...prev, [key]: value }));
   };
-
-  function saveService(serviceName) {
-    const edit = edits[serviceName];
-    if (!edit || !edit.price.trim()) {
-      dispatch({ type: "TOAST", msg: "Informe o preço do serviço" });
-      return;
-    }
-    dispatch({
-      type: "UPDATE_SERVICE",
-      name: serviceName,
-      price: edit.price.trim(),
-      dur: edit.dur.trim() || "—",
-    });
-  }
 
   function saveSchedule() {
     if (!schedule.service || !schedule.price.trim()) {
@@ -239,76 +205,6 @@ export default function OServices({ Nav }) {
             ))}
           </div>
         )}
-
-        {state.services.map((service) => {
-          const edit = edits[service.name] || {
-            price: service.price,
-            dur: service.dur,
-          };
-          return (
-            <div
-              key={service.name}
-              className="card"
-              style={{ marginBottom: 14 }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  marginBottom: 14,
-                }}
-              >
-                <div>
-                  <div style={{ fontSize: 15, fontWeight: 700 }}>
-                    {service.icon} {service.name}
-                  </div>
-                  <div style={{ fontSize: 13, color: "var(--text2)" }}>
-                    Duração atual: {service.dur}
-                  </div>
-                </div>
-                <div
-                  style={{
-                    fontSize: 15,
-                    fontWeight: 700,
-                    color: "var(--gold)",
-                  }}
-                >
-                  R$ {service.price}
-                </div>
-              </div>
-
-              <div className="input-group">
-                <label className="input-label">Novo preço (R$)</label>
-                <input
-                  className="input"
-                  value={edit.price}
-                  onChange={setEditField(service.name, "price")}
-                  placeholder="40"
-                  type="text"
-                />
-              </div>
-              <div className="input-group">
-                <label className="input-label">Duração</label>
-                <input
-                  className="input"
-                  value={edit.dur}
-                  onChange={setEditField(service.name, "dur")}
-                  placeholder="45 min"
-                  type="text"
-                />
-              </div>
-
-              <button
-                className="btn btn-gold"
-                style={{ marginTop: 10 }}
-                onClick={() => saveService(service.name)}
-              >
-                Salvar serviço
-              </button>
-            </div>
-          );
-        })}
       </div>
 
       <Nav />
